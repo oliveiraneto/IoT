@@ -1,3 +1,5 @@
+//Aluno: Sebastião Oliveira Silva Neto - 2011478
+
 float cm,duracao; // comprimento da onda
 
 byte pinoTransmissor=11; // trig
