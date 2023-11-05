@@ -1,0 +1,112 @@
+// Aluno: Sebastião Oliveira Silva Neto
+// Matrícula: 2011478
+
+const int ledVerde1 = 13;
+const int ledVerde2 = 12;
+const int ledAmarelo1 = 11;
+const int ledAmarelo2 = 10;
+const int ledVermelho1 = 9;
+const int ledVermelho2 = 8;
+const int buzzer = 3;
+const int triggerPin = 7;
+const int echoPin = 6;
+
+const int distancias[] = {45, 40, 30, 20, 10, 5, 0};
+const int frequencias[] = {330, 330, 396, 396, 495, 550, 0};
+const int duracoes[] = {1500, 1000, 500, 250, 125, 60, 0};
+
+float distanciaCM = 0;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(buzzer, OUTPUT);
+  pinMode(triggerPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+
+  pinMode(ledVerde1, OUTPUT);
+  pinMode(ledVerde2, OUTPUT);
+  pinMode(ledAmarelo1, OUTPUT);
+  pinMode(ledAmarelo2, OUTPUT);
+  pinMode(ledVermelho1, OUTPUT);
+  pinMode(ledVermelho2, OUTPUT);
+}
+
+void loop() {
+  distanciaCM = 0.01723 * readUltrasonicDistance();
+  controlaLEDs();
+  Serial.print(distanciaCM);
+  Serial.println(" cm");
+  delay(1000);
+}
+
+long readUltrasonicDistance() {
+  digitalWrite(triggerPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(triggerPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(triggerPin, LOW);
+  return pulseIn(echoPin, HIGH);
+}
+
+void controlaLEDs() {
+  digitalWrite(buzzer, LOW);
+
+  for (int i = 0; i < 7; i++) {
+    if (distanciaCM <= distancias[i]) {
+      acenderLED(i);
+      if (frequencias[i] > 0) {
+        tone(buzzer, frequencias[i], duracoes[i]);
+        delay(duracoes[i] + 100); // Adiciona um pequeno atraso para evitar interferência sonora
+        noTone(buzzer);
+      }
+    } else {
+      apagarLED(i);
+    }
+  }
+}
+
+void acenderLED(int indice) {
+  switch (indice) {
+    case 0:
+      digitalWrite(ledVerde1, HIGH);
+      break;
+    case 1:
+      digitalWrite(ledVerde2, HIGH);
+      break;
+    case 2:
+      digitalWrite(ledAmarelo1, HIGH);
+      break;
+    case 3:
+      digitalWrite(ledAmarelo2, HIGH);
+      break;
+    case 4:
+      digitalWrite(ledVermelho1, HIGH);
+      break;
+    case 5:
+      digitalWrite(ledVermelho2, HIGH);
+      break;
+  }
+}
+
+void apagarLED(int indice) {
+  switch (indice) {
+    case 0:
+      digitalWrite(ledVerde1, LOW);
+      break;
+    case 1:
+      digitalWrite(ledVerde2, LOW);
+      break;
+    case 2:
+      digitalWrite(ledAmarelo1, LOW);
+      break;
+    case 3:
+      digitalWrite(ledAmarelo2, LOW);
+      break;
+    case 4:
+      digitalWrite(ledVermelho1, LOW);
+      break;
+    case 5:
+      digitalWrite(ledVermelho2, LOW);
+      break;
+  }
+}
